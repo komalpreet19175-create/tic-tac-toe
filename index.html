@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic Tac Toe Game</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+        }
+
+        .game {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        #status {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .board {
+            width: 306px;
+            height: 306px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            margin: auto;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border: 2px solid black;
+            font-size: 45px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background: #ddd;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        .buttons button {
+            padding: 10px 18px;
+            margin: 5px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: black;
+            color: white;
+        }
+
+        .buttons button:hover {
+            background: #444;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <h1>Tic Tac Toe</h1>
+
+    <div id="status">Player X's Turn</div>
+
+    <div class="board">
+
+        <button class="cell" onclick="play(0)"></button>
+        <button class="cell" onclick="play(1)"></button>
+        <button class="cell" onclick="play(2)"></button>
+
+        <button class="cell" onclick="play(3)"></button>
+        <button class="cell" onclick="play(4)"></button>
+        <button class="cell" onclick="play(5)"></button>
+
+        <button class="cell" onclick="play(6)"></button>
+        <button class="cell" onclick="play(7)"></button>
+        <button class="cell" onclick="play(8)"></button>
+
+    </div>
+
+    <div class="buttons">
+        <button onclick="restart()">🔄 Restart</button>
+        <button onclick="restart()">🏠 New Game</button>
+    </div>
+
+</div>
+
+<script>
+
+let board = ["","","","","","","","",""];
+let player = "X";
+let gameFinished = false;
+
+let cells = document.querySelectorAll(".cell");
+
+let wins = [
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [2,4,6]
+];
+
+function play(position) {
+
+    if (board[position] !== "" || gameFinished) {
+        return;
+    }
+
+    board[position] = player;
+    cells[position].textContent = player;
+
+    if (winner()) {
+        document.getElementById("status").textContent =
+            "🎉 Player " + player + " Wins!";
+        gameFinished = true;
+        return;
+    }
+
+    if (!board.includes("")) {
+        document.getElementById("status").textContent =
+            "🤝 Game Draw!";
+        gameFinished = true;
+        return;
+    }
+
+    player = player === "X" ? "O" : "X";
+
+    document.getElementById("status").textContent =
+        "Player " + player + "'s Turn";
+}
+
+function winner() {
+
+    for (let combination of wins) {
+
+        let a = combination[0];
+        let b = combination[1];
+        let c = combination[2];
+
+        if (
+            board[a] !== "" &&
+            board[a] === board[b] &&
+            board[b] === board[c]
+        ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function restart() {
+
+    board = ["","","","","","","","",""];
+    player = "X";
+    gameFinished = false;
+
+    cells.forEach(function(cell) {
+        cell.textContent = "";
+    });
+
+    document.getElementById("status").textContent =
+        "Player X's Turn";
+}
+
+</script>
+
+</body>
+</html>
