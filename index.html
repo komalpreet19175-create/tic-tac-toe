@@ -1,50 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tic Tac Toe Game</title>
+    <title>Tic Tac Toe</title>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         body {
             margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-family: Arial, sans-serif;
             background: #f2f2f2;
+            text-align: center;
         }
 
         .game {
-            text-align: center;
+            margin-top: 100px;
         }
 
         h1 {
             font-size: 35px;
-            margin-bottom: 10px;
         }
 
         #status {
             font-size: 20px;
-            margin-bottom: 20px;
             font-weight: bold;
+            margin: 15px;
         }
 
         .board {
-            width: 306px;
-            height: 306px;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 3px;
-            margin: auto;
+            grid-template-columns: repeat(3, 90px);
+            gap: 5px;
+            justify-content: center;
         }
 
         .cell {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             background: white;
             border: 2px solid black;
             font-size: 45px;
@@ -64,15 +54,15 @@
             padding: 10px 18px;
             margin: 5px;
             font-size: 16px;
+            background: black;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            background: black;
-            color: white;
         }
 
-        .buttons button:hover {
-            background: #444;
+        #homeBtn {
+            display: none;
         }
     </style>
 </head>
@@ -81,7 +71,7 @@
 
 <div class="game">
 
-    <h1>Tic Tac Toe</h1>
+    <h1>🎮 Tic Tac Toe</h1>
 
     <div id="status">Player X's Turn</div>
 
@@ -102,21 +92,27 @@
     </div>
 
     <div class="buttons">
-        <button onclick="restart()">🔄 Restart</button>
-        <button onclick="restart()">🏠 New Game</button>
+
+        <button onclick="restartGame()">🔄 Restart</button>
+
+        <button id="homeBtn" onclick="goHome()">🏠 Home</button>
+
     </div>
 
 </div>
 
+
 <script>
 
 let board = ["","","","","","","","",""];
-let player = "X";
-let gameFinished = false;
+let currentPlayer = "X";
+let gameOver = false;
 
-let cells = document.querySelectorAll(".cell");
+const cells = document.querySelectorAll(".cell");
+const status = document.getElementById("status");
+const homeBtn = document.getElementById("homeBtn");
 
-let wins = [
+const winningPatterns = [
     [0,1,2],
     [3,4,5],
     [6,7,8],
@@ -127,67 +123,86 @@ let wins = [
     [2,4,6]
 ];
 
-function play(position) {
 
-    if (board[position] !== "" || gameFinished) {
+function play(index) {
+
+    if (board[index] !== "" || gameOver) {
         return;
     }
 
-    board[position] = player;
-    cells[position].textContent = player;
+    board[index] = currentPlayer;
+    cells[index].textContent = currentPlayer;
 
-    if (winner()) {
-        document.getElementById("status").textContent =
-            "🎉 Player " + player + " Wins!";
-        gameFinished = true;
-        return;
-    }
-
-    if (!board.includes("")) {
-        document.getElementById("status").textContent =
-            "🤝 Game Draw!";
-        gameFinished = true;
-        return;
-    }
-
-    player = player === "X" ? "O" : "X";
-
-    document.getElementById("status").textContent =
-        "Player " + player + "'s Turn";
+    checkWinner();
 }
 
-function winner() {
 
-    for (let combination of wins) {
+function checkWinner() {
 
-        let a = combination[0];
-        let b = combination[1];
-        let c = combination[2];
+    for (let pattern of winningPatterns) {
+
+        let a = pattern[0];
+        let b = pattern[1];
+        let c = pattern[2];
 
         if (
             board[a] !== "" &&
             board[a] === board[b] &&
             board[b] === board[c]
         ) {
-            return true;
+
+            status.textContent =
+                "🎉 Player " + currentPlayer + " Wins!";
+
+            gameOver = true;
+
+            homeBtn.style.display = "inline-block";
+
+            return;
         }
     }
 
-    return false;
+
+    if (!board.includes("")) {
+
+        status.textContent = "🤝 Game Draw!";
+
+        gameOver = true;
+
+        homeBtn.style.display = "inline-block";
+
+        return;
+    }
+
+
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+
+    status.textContent =
+        "Player " + currentPlayer + "'s Turn";
 }
 
-function restart() {
+
+function restartGame() {
 
     board = ["","","","","","","","",""];
-    player = "X";
-    gameFinished = false;
+    currentPlayer = "X";
+    gameOver = false;
 
     cells.forEach(function(cell) {
         cell.textContent = "";
     });
 
-    document.getElementById("status").textContent =
-        "Player X's Turn";
+    status.textContent = "Player X's Turn";
+
+    homeBtn.style.display = "none";
+}
+
+
+function goHome() {
+
+    restartGame();
+
+    status.textContent = "Player X's Turn";
 }
 
 </script>
